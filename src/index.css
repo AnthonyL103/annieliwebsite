@@ -1,0 +1,206 @@
+@import "tailwindcss";
+
+/*
+ * A beach day notebook, in UC Santa Barbara colors.
+ *  navy  #003660 and gold #febc11 are the school colors
+ *  sea   the Pacific, from the campus coastline photos
+ *  coral and sand come from Santa Barbara sunsets and beaches
+ *  palm  the palm trees in her banner photo
+ */
+@theme {
+  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --font-hand: 'Caveat', 'Segoe Print', cursive;
+  --font-sans: 'Nunito', ui-sans-serif, system-ui, sans-serif;
+
+  --color-ink: #0b2540;
+  --color-muted: #4b6075;
+  --color-paper: #fffdf6;
+  --color-sand: #fbeecb;
+  --color-sand-deep: #e9cf94;
+
+  --color-navy: #003660;
+  --color-navy-soft: #e3ebf3;
+  --color-gold: #febc11;
+  --color-gold-soft: #fff1b8;
+  --color-gold-deep: #7d5600;
+  --color-sea: #047a9c;
+  --color-sea-mid: #6ccad6;
+  --color-sea-soft: #d9f2f7;
+  --color-sea-deep: #036683;
+  --color-coral: #d9472f;
+  --color-coral-soft: #ffe5dc;
+  --color-coral-deep: #ad3623;
+  --color-palm: #3f7d58;
+  --color-palm-soft: #e0f1e4;
+  --color-palm-deep: #2f6045;
+
+  --animate-sway: sway 4.5s ease-in-out infinite;
+  --animate-rays: rays 90s linear infinite;
+  --animate-roll-a: roll 16s linear infinite;
+  --animate-roll-b: roll 24s linear infinite reverse;
+  --animate-roll-c: roll 34s linear infinite;
+  --animate-gull: gull 38s linear infinite;
+  --animate-glow: glow 5s ease-in-out infinite;
+  --animate-wobble: wobble 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes sway {
+  0%, 100% { transform: rotate(-4deg); }
+  50% { transform: rotate(4deg); }
+}
+@keyframes rays { to { transform: rotate(360deg); } }
+@keyframes roll { to { transform: translateX(-50%); } }
+@keyframes gull {
+  0% { transform: translate3d(-12vw, 0, 0); }
+  50% { transform: translate3d(50vw, -18px, 0); }
+  100% { transform: translate3d(112vw, 6px, 0); }
+}
+@keyframes glow {
+  0%, 100% { transform: scale(1); opacity: 0.85; }
+  50% { transform: scale(1.08); opacity: 1; }
+}
+@keyframes wobble {
+  from { transform: translateY(-1px) rotate(-2deg); }
+  to { transform: translateY(2px) rotate(2deg); }
+}
+
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* Lenis smooth scroll hooks */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+/* ---------- paper textures ---------- */
+.lined {
+  background-color: var(--color-paper);
+  background-image: repeating-linear-gradient(to bottom, transparent 0 35px, rgba(4, 122, 156, 0.16) 35px 36px);
+}
+.lined-sm {
+  background-color: #fff;
+  background-image: repeating-linear-gradient(to bottom, transparent 0 27px, rgba(4, 122, 156, 0.2) 27px 28px);
+  background-position: 0 10px;
+}
+.dotted {
+  background-color: var(--color-sand);
+  background-image: radial-gradient(rgba(125, 86, 0, 0.18) 1.2px, transparent 1.2px);
+  background-size: 22px 22px;
+}
+.margin-line { position: relative; }
+.margin-line::before {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  left: var(--margin-x, 2.25rem);
+  width: 2px;
+  background: rgba(217, 71, 47, 0.45);
+}
+
+/* ---------- reveal: notes slapped onto the page ---------- */
+.r {
+  opacity: 0;
+  transition: opacity 0.45s ease-out, transform 0.9s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition-delay: var(--d, 0ms);
+}
+.r-rise { transform: translateY(28px); }
+.r-drop { transform: translateY(-56px) rotate(-5deg) scale(1.07); }
+.r-left { transform: translateX(-70px) rotate(-2.5deg); }
+.r-right { transform: translateX(70px) rotate(2.5deg); }
+.r-pop { transform: scale(0.65) rotate(5deg); }
+.r.in { opacity: 1; transform: none; }
+
+/* ---------- pencil writing ---------- */
+.write { clip-path: inset(-25% 100% -25% -2%); }
+.write.in { animation: write-wipe var(--dur, 1400ms) steps(var(--steps, 26), end) var(--d, 0ms) forwards; }
+@keyframes write-wipe { to { clip-path: inset(-25% -3% -25% -2%); } }
+
+.write-pencil {
+  position: absolute;
+  left: 0;
+  top: 88%;
+  width: 0.55em;
+  height: 1.45em;
+  pointer-events: none;
+  opacity: 0;
+  transform-origin: 50% 100%;
+  transform: translate(-50%, -100%) rotate(28deg);
+}
+.write-pencil.in { animation: pencil-move var(--dur, 1400ms) steps(var(--steps, 26), end) var(--d, 0ms) forwards; }
+@keyframes pencil-move {
+  0% { left: 0; opacity: 1; }
+  98% { left: 100%; opacity: 1; }
+  100% { left: 100%; opacity: 0; }
+}
+
+/* ---------- hand drawn strokes ---------- */
+.scribble {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset var(--dur, 0.9s) cubic-bezier(0.65, 0, 0.35, 1) var(--d, 0ms);
+}
+.scribble.in { stroke-dashoffset: 0; }
+
+/* ---------- highlighter ---------- */
+.mark {
+  background-image: linear-gradient(transparent 52%, var(--mark, rgba(254, 188, 17, 0.6)) 52% 94%, transparent 94%);
+  background-repeat: no-repeat;
+  background-size: 0% 100%;
+  transition: background-size 0.9s cubic-bezier(0.65, 0, 0.35, 1) var(--d, 0ms);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  padding: 0 0.12em;
+}
+.mark.in { background-size: 100% 100%; }
+
+/* ---------- sticky notes, tape, polaroids ---------- */
+.postit { position: relative; }
+.postit::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 1.9rem;
+  height: 1.9rem;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.14) 0 50%, var(--fold, #fff) 50% 100%);
+  box-shadow: -2px -2px 4px rgba(0, 0, 0, 0.08);
+}
+.tape {
+  position: absolute;
+  width: 5rem;
+  height: 1.6rem;
+  background: rgba(254, 188, 17, 0.62);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+  clip-path: polygon(0 8%, 4% 0, 8% 10%, 12% 0, 88% 0, 92% 10%, 96% 0, 100% 8%, 100% 92%, 96% 100%, 92% 90%, 88% 100%, 12% 100%, 8% 90%, 4% 100%, 0 92%);
+}
+.tape-sea { background: rgba(108, 202, 214, 0.7); }
+.tape-coral { background: rgba(255, 140, 120, 0.65); }
+.tape-palm { background: rgba(120, 190, 140, 0.65); }
+
+.paper-shadow { filter: drop-shadow(0 -3px 2px rgba(11, 37, 64, 0.12)); }
+
+::selection { background: var(--color-gold); color: var(--color-navy); }
+
+:focus-visible {
+  outline: 3px solid var(--color-sea);
+  outline-offset: 3px;
+  border-radius: 0.4rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .r { opacity: 1; transform: none; transition: none; }
+  .write { clip-path: none; }
+  .write.in { animation: none; }
+  .write-pencil { display: none; }
+  .scribble { stroke-dashoffset: 0; transition: none; }
+  .mark { background-size: 100% 100%; transition: none; }
+  *, *::before, *::after { animation: none !important; }
+}
